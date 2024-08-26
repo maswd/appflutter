@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:sarfapp/providers/LocalProvider.dart';
 import 'package:sarfapp/providers/ThemeProvider.dart';
 import 'package:sarfapp/ui/ui_helper/ThemeSwitcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -17,6 +18,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => LocaleProvider()),
       ],
       child: MyApp(),
     ),
@@ -26,10 +28,10 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) {
+    return Consumer2<ThemeProvider,LocaleProvider>(
+      builder: (context, themeProvider,localeProvider, child) {
         return MaterialApp(
-          locale: const Locale("fa", ''),
+          locale: localeProvider.locale,
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -58,15 +60,28 @@ class TestPage extends StatefulWidget {
 }
 
 class _TestPageState extends State<TestPage> {
+
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context); // دسترسی به LocaleProvider
+
     return Scaffold(
       appBar: AppBar(
         actions: const [ThemeSwitcher()],
         title: const Text("data"),
       ),
-      body: Center(
-        child: Text(AppLocalizations.of(context)!.helloWorld,style:Theme.of(context).textTheme.bodySmall,),
+      body: Row(
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              localeProvider.toggleLocale(); // تغییر زبان
+            },
+            child: Text(AppLocalizations.of(context)!.changeLanguage),
+          ),
+          Center(
+            child: Text(AppLocalizations.of(context)!.helloWorld,style:Theme.of(context).textTheme.bodySmall,),
+          ),
+        ],
       ),
     );
   }

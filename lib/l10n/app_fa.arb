@@ -1,3 +1,5 @@
 {
-    "helloWorld": "هلو ورد!"
+    "helloWorld": "هلو ورد!",
+      "changeLanguage": "تغییر زبان"
+
 }
